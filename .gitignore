@@ -2,3 +2,7 @@
 .Rhistory
 .RData
 .Ruserdata
+code/libs
+code/workshop_quarto_files
+code/Csparks_Census_talk_files
+data/inlamod1.rds
