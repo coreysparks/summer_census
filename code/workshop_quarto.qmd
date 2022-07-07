@@ -1,0 +1,330 @@
+---
+title: "Summer at Census - Spatial Analysis of Low Response Score"
+author: "Corey S. Sparks, PhD"
+bibliography: SpatialDemographyClass.bib
+---
+
+### Exploratory Spatial Data Analysis (ESDA)
+
+### Skepticism and openness
+
+In exploratory spatial data analysis (ESDA), we are looking for trends and patterns in data. We are working under the assumption that the more one knows about the data, the more effectively it may be used to develop, test and refine theory. This generally requires we follow two principles:
+
+**Skepticism**: One should be skeptical of measures that summarize data, since they can conceal or misrepresent the most informative aspects of data.
+
+**Openness**: We must be open to patterns in the data that we did not expect to find, because these can often be the most revealing outcomes of the analysis.
+
+### Global and Local Statistics
+
+By global we imply that one statistic is used to adequately summarize the data, i.e. the mean or median Or, a regression model that is suitable for all areas in the data Local statistics are useful when the process you are studying *varies over space*, i.e. different areas have different local values that might cluster together to form a local deviation from the overall mean Or a regression model that accounts for variation in the variables over space. This we often call *spatial heterogeniety*, meaning the process that generates the data varies over space. This is also called a *spatial regime*.
+
+### Stationarity
+
+Stationarity simply means that the process is not changing with respect to either time (i.e. time series analysis) or space.
+
+This implies that the process that has generated our data is acting the same way in all areas under study.
+
+The implications of Stationarity are that we can use a global statistic to measure our process and not feel too bad about it. It also implies that our observations are iid (independent and identically distributed) with respect to one another e.g. the parameters estimated by the regression of X on Y are the same throughout our area of study, and do not have a tendency to change. Also, it means the model estimated is equally well specified at all locations. *This is our general assumption in regression models*
+
+### Non-Stationarity
+
+If a process is *non-stationary* then the process changes with respect to time or space.
+
+This implies that the process that has generated our data is not acting the same way in all areas, or the expected value (mean, or variance) of our data are subject to spatial fluctuations.
+
+If our data are subject to such fluctuations, the this implies that our global statistics are also subject to major local fluctuations Meaning areas in our data can tend to cluster together and have similar values
+
+### Autocorrelation
+
+This can occur in either space or time Really boils down to the non-independence between neighboring values The values of our independent variable (or our dependent variables) may be similar because Our values occur closely in time (temporal autocorrelation) closely in space (spatial autocorrelation)
+
+### Basic Assessment of Spatial Dependency
+
+### Assessment of Spatial Dependency
+
+Before we can model the dependency in spatial data, we must first cover the ideas of creating and modeling neighborhoods in our data. By neighborhoods, we are referring to the clustering or connectedness of observations.
+
+The exploratory methods we will cover in this lesson depend on us knowing how our data are arranged in space, who is next to who. This is important (as we will see later) because most correlation in spatial data tends to die out as we get further away from a specific location.
+
+### Tobler's law
+
+Waldo Tobler [@Tobler1970] suggested the first law of geography: - Everything is related to everything else, but near things are more related than distant things.
+
+We can see this better in graphical form: We expect the correlation between the attributes of two points to diminish as the distance between them grows.
+
+![](spatcorr.png)
+
+An example of this type of phenomena is how rich and poor neighborhoods tend to cluster around one another.
+
+So our statistics that correct for, or in fact measure spatial association have to account for where we are with respect to the observation under present consideration. This is typically done by specifying/identifying the spatial connectivity between spatial observations. Spatial connectivity, or a spatial neighborhood, is defined based on the interactions/associations between features in our data This connectivity is often in terms of the spatial weight of an observation, in other words how much of the value of a surrounding observation do we consider when we are looking at spatial correlation.\
+Typically the weight of a neighboring observation dies out the further it is away from our feature of interest.
+
+There are two typical ways in which we measure spatial relationships Distance and contiguity
+
+### Distance based association
+
+In a distance based connectivity method, features (generally points) are considered to be contiguous if they are within a given radius of another point. The radius is really left up to the researcher to decide. For example we did this in the point analysis lab, where we selected roads within a mile of hospitals. We can equally do it to search for other hospitals within a given radius of every other hospital. The would then be labeled as neighbors according to our radius rule. Likewise, we can calculate the distance matrix between a set of points This is usually measured using the standard Euclidean distance
+
+$d^2=\sqrt{(x_1-x_2)^2 + (y_1 - y_2)^2}$
+
+Where x and y are coordinates of the point or polygon in question (selected features), this is the as the crow flies distance. *There are lots of distances*
+
+### Spatial Neighbors
+
+There are many different criteria for deciding if two observations are neighbors Generally two observations must be within a critical distance, d, to be considered neighbors. This is the Minimum distance criteria, and is very popular. This will generate a matrix of binary variables describing the neighborhood. We can also describe the neighborhoods in a continuous weighting scheme based on the distance between them
+
+*Inverse Distance Weight*
+
+$w_{ij} = \frac{1}{d_{ij}}$
+
+or *Inverse-Squared Distance Weight*
+
+$w_{ij} = \frac{1}{d_{ij}^2}$
+
+*K nearest neighbors* A useful way to use distances is to construct a k-nearest neighbors set. This will find the "k" closest observations for each observation, where k is some integer. For instance if we find the k=3 nearest neighbors, then each observation will have 3 neighbors, which are the closest observations to it, *regardless of the distance between them* which is important. Using the k nearest neighbor rule, two observations could potentially be very far apart and still be considered neighbors.
+
+**Adjacency weights** If the other feature is within the *threshold distance*, a 1 is given, otherwise a 0 is given. Neighborhoods are created based on which observations are judged contiguous.
+
+This is generally the best way to treat polygon features Polygons are contiguous if they share common topology, like an edge (line segment) or a vertex (point). Think like a chess board: *Rook adjacency* Neighbors must share a line segment
+
+*Queen adjacency* Neighbors must share a vertex or a line segment If polygons share these boundaries (based on the specific definition: rook or queen), they are given a weight of 1 (adjacent), else they are given a value 0, (nonadjacent)
+
+![](adj.png)
+
+**What does a spatial weight matrix look like?** 
+Assume this is our data: ![Adjacency2](poly4.png)
+
+This would be a *Rook-based* adjacency weight matrix:
+
+$$
+w_{ij} = \begin{bmatrix}
+0 & 1 & 1 & 0\\ 
+1 & 0 & 0 & 1 \\ 
+1 & 0 &  0& 1\\ 
+ 0&  1& 1 & 0
+\end{bmatrix}
+$$
+
+$w_{ij}$ = 1 if polygons share a border, 0 if they don't. Also note that an observation can't be it's own neighbor and the diagonal elements of the matrix are all 0.
+
+### Measuring Spatial Autocorrelation
+
+If we observe data Z(s) (an attribute) at location i, and again at location j The spatial autocorrelation between $Z(s)_i$ and $Z(s)_j$ is degree of similarity between them, measured as the standardized covariance between their locations and values. In the absence of spatial autocorrelation the locations of $Z(s)_i$ and $Z(s)_j$ has nothing to do with the values of $Z(s)_i$ and $Z(s)_j$ OTOH, if autocorrelation is present, close proximity of $Z(s)_i$ and $Z(s)_j$ leads to close values of their attributes.
+
+*Positive autocorrelation* Positive autocorrelation means that a feature is positively associated with the values of the surrounding area (as defined by the spatial weight matrix), high values occur with high values, and low with low. For example, poverty rates typically cluster together, meaning you have poor neighborhoods next to other poor neighborhoods. This results in positive auto-correlation. Similarly, you typically see that affluent neighborhoods are geographically close to other affluent neighborhoods.
+
+Both of these are examples of positive auto-correlation.
+
+*Negative autocorrelation* Negative autocorrelation means that a feature is negatively associated with the values of the surrounding area, high with low, low with high. Negative auto-correlation is rarer to see, but an example could be when neighborhoods are gentrifying. When gentrification occurs, you typically have one area where new home construction or new business construction happens, but it it typically surrounded by areas where development is lacking. This would then create a neighborhood of relative affluence among other neighborhoods which are struggling. This is an example of negative auto-correlation.
+
+*Spatial lags* of a variable are done via multiplying the variable through the spatial weight matrix for the data.
+
+If we have a value $Z(s_i)$ at location i and a spatial weight matrix $w_{ij}$ describing the spatial neighborhood around location i, we can find the lagged value of the variable by: $WZ_i = Z(s_i) * w_{ij}$
+
+This calculates what is effectively, the neighborhood average value in locations around location i, often stated $Z(s_{-i})$
+
+Let's return to the adjacency matrix from above, a *Rook-based* adjacency weight matrix.
+
+$$
+w_{ij} = \begin{bmatrix}
+0 & 1 & 1 & 0\\ 
+1 & 0 & 0 & 1 \\ 
+1 & 0 &  0& 1\\ 
+ 0&  1& 1 & 0
+\end{bmatrix}
+$$
+
+Typically this matrix is standardized, by dividing each element of $w_{ij}$ by the number of neighbors, this is called the *row-standardized* form of the matrix. In this case, there are two neighbors, so row-standardizations results in the following matrix:
+
+$$
+w_{ij} = \begin{bmatrix}
+0 & .5 & .5 & 0\\ 
+.5 & 0 & 0 & .5 \\ 
+.5 & 0 &  0& .5\\ 
+ 0&  .5& .5 & 0
+\end{bmatrix}
+$$
+
+Let's taka a variable z, equal to:
+
+$$z=\begin{bmatrix}
+1 & 2 & 3 & 4
+\end{bmatrix}$$
+
+When we form the product: $z'W$, we get:
+
+$$z_{lag}=\begin{bmatrix}
+2.5 & 2.5 & 2.5 & 2.5
+\end{bmatrix}$$
+
+In R, we can calculate the spatially lagged value of z. See the code below.
+
+```{r}
+z<-c(1,2,3,4)
+w<-matrix(c(0,.5,.5,0,.5,0,0,.5,.5,0,0,.5,0,.5,.5,0), nrow = 4, byrow = T)
+z
+```
+
+```{r}
+w
+```
+
+```{r}
+z%*%w
+```
+
+### Measureing spatial autocorrelation
+
+### Moran's I Statistic
+
+One of the most popular global auto-correlation statistic is Moran's I [@Moran1950]
+
+$I = \frac{n}{(n - 1)\sigma^2 w_{..}} \sum^i_n \sum^j_n w_{ij} (Z(s_i) - \bar Z)(Z(s_j) - \bar Z)$
+
+with:
+
+\-$Z(s_i)$ being the value of the variable, the poverty rate for example, at location i
+
+\-$Z(s_j)$ being the value of the poverty rate at location j,
+
+\-$\sigma^2$ is sample variance of the poverty rate
+
+\-$w_{ij}$ is the weight for location *ij* (0 if they are not neighbors, 1 otherwise).
+
+Moran's I is basically a correlation, *think of a Pearson correlation* $\rho$, *between a variable and a spatially lagged version of itself*.
+
+**Moran's I Scatterplot** It is sometimes useful to visualize the relationship between the actual values of a variable and its spatially lagged values. This is the so called **Moran scatterplot**
+
+Lagged values are the average value of the surrounding neighborhood around location i
+
+lag(Z) = $z_{ij} * w_{ij}$ = $z'W$ in matrix terms
+
+Which, now we see where we get the *y-value* of the Moran scatterplot. It is just the lagged version of the original variable.
+
+The Moran scatterplot shows the association between the value of a variable in a location and its spatial neighborhood's average value. The variables are generally plotted as *z-scores*,to avoid scaling issues.
+
+And here we show the Moran scatterplot. This plot shows the z-scored values of the original variable on the x axis and the spatially lagged values of the original variable on the y axis. In this case, we see a weak positive relationship to the values. This positive relationship indicates positive auto-correlation in this variable.
+
+**Moran Scatter plot for San Antonio Low Response Rate**
+
+```{r}
+
+library(tidyverse)
+
+tx_lrs <- sf::st_read("../data/tx_lrs.gpkg")
+
+sa_lrs <- tx_lrs %>%
+  filter(COUNTYFP == "029")
+
+```
+
+Here is the overall low response rate map for San Antonio.
+
+```{r}
+library(tmap)
+
+tmap_mode("view")
+
+tm_shape(sa_lrs)+
+  tm_polygons("Low_Respon",
+                style="quantile",
+               n=5,
+               legend.hist = TRUE) +
+  tm_basemap(server="OpenStreetMap",alpha=0.5)
+```
+
+### Create spatial adjacency information
+
+```{r,echo=TRUE, warning=FALSE, message=FALSE}
+library(sfdep)
+
+#Make a rook style weight matrix
+sanb <- sa_lrs %>%
+  mutate(nb = st_contiguity(geom, queen = F), 
+         wt = st_weights(nb),
+         .before = 1)
+```
+
+```{r}
+global_moran_perm(sanb$Low_Respon,
+             nb = sanb$nb,
+             wt = sanb$wt, 
+             nsim = 1000)
+
+```
+
+Moran's I is basically a correlation think Pearson's $\rho$ on a variable and a *spatially lagged* version of itself. Spatial lags of a variable are done via multiplying the variable through the spatial weight matrix for the data.
+
+### Local Moran's I
+
+So far, we have only seen a *Global* statistic for auto-correlation, and this tells us if there is any *overall* clustering in our data. We may be more interested in precisely *where* within the data the auto-correlation occurs, or where *clusters* are located.
+
+A local version of the Moran statistic is available as well. This basically calculates the Moran I statistic from above, but only for each observation's *local neighborhood*.
+
+It compares the observation's value to the local neighborhood average, instead of the global average. Luc Anselin [@Anselin2010a] referred to this as a "**LISA**" statistic, for *Local Indicator of Spatial Autocorrelation*.
+
+Here is a LISA map for clusters of the low response score, which shows areas of concentrated (clustered) high LRS clustering in red, and concentrated low values of the LRS in blue.
+
+```{r}
+
+sa_locali <- sa_lrs%>%
+  transmute(lisa = local_moran(Low_Respon,
+                                nb = sanb$nb,
+                                wt = sanb$wt,
+                                nsim = 1000))%>%
+               tidyr::unnest(lisa)
+
+sa_locali <- sa_locali %>%
+  mutate(cluster = ifelse(p_ii_sim < .05,
+                          as.character(mean),
+                          NA)) 
+```
+
+```{r}
+tmap_mode("view")
+
+tm_shape(sa_locali)+
+  tm_polygons("cluster",
+              palette = "RdBu",
+              textNA = "Not Significant")+
+  tm_basemap(server="OpenStreetMap",alpha=0.5)
+
+```
+
+The red and blue areas are so-called *clusters*, because they are areas with higher (or lower, for the blues) than average LRS values, surrounded by areas that also have higher than average LRS values. The red clusters are so called "*high-high clusters*", likewise the blue areas are called "*low-low clusters*".
+
+We also see in the legend that light pink and light blue values are possible. The light pink polygons represent areas that have high values of LRS, but are in a LRS spatial neighborhood, and are called high-low *outliers*. These are rare in this example.
+
+Likewise, possible values include light blue polygons, these are called low-high outliers, because they have low LRS scores, but are in a high LRS spatial neighborhood. These are also rare in this example.
+
+There are of course other autocorrelation statistics. For instance Geary's C
+
+### Geary's C
+
+-   RC Geary in [1954](http://www.jstor.org/stable/2986645) derived the C statistic
+
+-   $C = \frac{n-1}{2 \sum_{ij} w_{ij}} \frac{\sum_{ij} w_{ij} \left ( x_i - x_j \right )^2 }{\sum_{ij} \left ( x_i - \bar x \right )^2 }$
+
+-   Similar in interpretation to the Moran statistic, C, measures whether values are similar in neighboring areas.
+
+-   C == 1 == No autocorrelation, C\< 1 == positive autocorrelation, C \> 1 negative autocorrelation
+
+### Getis-Ord G
+
+-   `"{Too Ugly to Show}"` [See the paper](http://onlinelibrary.wiley.com/store/10.1111/j.1538-4632.1992.tb00261.x/asset/j.1538-4632.1992.tb00261.x.pdf?v=1&t=it0w4k1t&s=a164f95f2fd2c46259b70d859f2366f1e8cbae2d)
+
+-   Similar to Geary's C in interpretation
+
+-   High values next to high values, and so on
+
+### What these methods tell you?
+
+-   Moran's I is a *descriptive statistic ONLY*,
+-   It simply indicates if there is spatial association/autocorrelation in a variable
+-   Local Moran's I tells you if there is significant localized clustering of the variable
+
+
+###  - Break - 
+
+## Regression modeling for spatial data
+
