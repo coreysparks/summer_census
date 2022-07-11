@@ -602,7 +602,7 @@ fl%>%
 ---
 ## Spatial trend
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.width=8, fig.height=6}
 fls$spre<- fit2$summary.random$struct$mean+ fit2$summary.fixed$mean[1]
 
 fls%>%
@@ -617,7 +617,7 @@ fls%>%
 ---
 ## Spatial disparity
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.width=8, fig.height=6}
 fls$spre_bl<- fit2$summary.random$struct2$mean + fit2$summary.fixed$mean[1]+fit2$summary.fixed$mean[3]
 
 fls%>%
@@ -674,7 +674,8 @@ tmap_options(show.messages = FALSE)
 ---
 ## Low Response Score in Texas
 
-```{r, echo=FALSE, warning=FALSE }
+```{r, echo=FALSE, warning=FALSE, fig.width=8, fig.height=6 }
+
 tm_shape(tx_lrs)+
   tm_polygons("Low_Respon", style="quantile",n=5,  border.col=NA, border.alpha=0)+
   tm_shape(sts)+
@@ -685,7 +686,7 @@ tm_shape(tx_lrs)+
 
 ---
 ### Spatial correlation random effect
-```{r, echo=FALSE, warning=FALSE }
+```{r, echo=FALSE, warning=FALSE, fig.width=8, fig.height=6 }
 
 
 tm_shape(tx_lrs)+
@@ -698,7 +699,7 @@ tm_shape(tx_lrs)+
 ---
 ### IID random effect
 
-```{r, echo=FALSE}
+```{r, echo=FALSE, fig.width=8, fig.height=6}
 tm_shape(tx_lrs)+
   tm_polygons("i_re", style="quantile", n=5, palette = viridisLite::viridis(n=5), border.col=NA, border.alpha=0)+
   tm_shape(sts)+
