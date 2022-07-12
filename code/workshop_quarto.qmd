@@ -23,13 +23,15 @@ Additional content on spatial analysis in demography from my formal courses can 
 - [GIS for population science course](https://github.com/coreysparks/DEM7093)
 - [Spatial demography course](https://github.com/coreysparks/DEM7263)
 
-
+I also recommend using GeoDa as a tool to explore spatial data. It can be found on the [Github page for the project](https://geodacenter.github.io/). 
 
 ### Exploratory Spatial Data Analysis (ESDA)
 
 ### Skepticism and openness
 
-In exploratory spatial data analysis (ESDA), we are looking for trends and patterns in data. We are working under the assumption that the more one knows about the data, the more effectively it may be used to develop, test and refine theory. This generally requires we follow two principles:
+In exploratory spatial data analysis (ESDA), we are looking for trends and patterns in data. We are working under the assumption that the more one knows about the data, the more effectively it may be used to develop, test and refine theory. 
+
+This generally requires we follow two principles:
 
 **Skepticism**: One should be skeptical of measures that summarize data, since they can conceal or misrepresent the most informative aspects of data.
 
@@ -59,13 +61,11 @@ If our data are subject to such fluctuations, the this implies that our global s
 
 This can occur in either space or time Really boils down to the non-independence between neighboring values The values of our independent variable (or our dependent variables) may be similar because Our values occur closely in time (temporal autocorrelation) closely in space (spatial autocorrelation)
 
-### Basic Assessment of Spatial Dependency
-
 ### Assessment of Spatial Dependency
 
-Before we can model the dependency in spatial data, we must first cover the ideas of creating and modeling neighborhoods in our data. By neighborhoods, we are referring to the clustering or connectedness of observations.
+Before we can explore the dependency in spatial data, we must first cover the ideas of creating and modeling neighborhoods in our data. By neighborhoods, we are referring to the clustering or connectedness of observations.
 
-The exploratory methods we will cover in this lesson depend on us knowing how our data are arranged in space, who is next to who. This is important (as we will see later) because most correlation in spatial data tends to die out as we get further away from a specific location.
+The exploratory methods we will cover in this workshop depend on us knowing how our data are arranged in space, who is next to who. This is important (as we will see later) because most correlation in spatial data tends to die out as we get further away from a specific location.
 
 ### Tobler's law
 
@@ -77,13 +77,15 @@ We can see this better in graphical form: We expect the correlation between the 
 
 An example of this type of phenomena is how rich and poor neighborhoods tend to cluster around one another.
 
-So our statistics that correct for, or in fact measure spatial association have to account for where we are with respect to the observation under present consideration. This is typically done by specifying/identifying the spatial connectivity between spatial observations. 
+So our statistics that correct for, or measure spatial association, we have to account for where observations are with respect to each other. This is typically done by specifying/identifying the spatial connectivity between observations. 
 
-Spatial connectivity, or spatial neighborhoods, are defined based on the interactions/associations between features in our data This connectivity is often in terms of the spatial weight of an observation, in other words how much of the value of a surrounding observation do we consider when we are looking at spatial correlation.
+**Spatial connectivity** is defined based on the interactions/associations between features in our data.
 
-Typically the weight of a neighboring observation dies out the further it is away from our feature of interest.
+This connectivity is often in terms of the spatial weight of an observation, in other words how much of the value of a surrounding observation do we consider when we are looking at spatial correlation.
 
-There are two typical ways in which we measure spatial relationships Distance and contiguity
+Typically the weight of a neighboring observation decreases the further it is away from our feature of interest.
+
+There are two typical ways in which we measure spatial relationships - distance and polygon contiguity
 
 ## Distance based association
 
@@ -95,7 +97,7 @@ Where x and y are coordinates of the point or polygon in question (selected feat
 
 ### Spatial Neighbors
 
-There are many different criteria for deciding if two observations are neighbors Generally two observations must be within a critical distance, d, to be considered neighbors. This is the Minimum distance criteria, and is very popular. This will generate a matrix of binary variables describing the neighborhood. We can also describe the neighborhoods in a continuous weighting scheme based on the distance between them
+There are many different criteria for deciding if two observations are neighbors Generally two observations must be within a critical distance, $d$, to be considered neighbors. This is the Minimum distance criteria, and is very popular. This will generate a matrix of binary indicators describing the neighborhood. We can also describe the neighborhoods in a continuous weighting scheme based on the distance between them
 
 *Inverse Distance Weight*
 
@@ -111,9 +113,10 @@ For instance if we find the k=3 nearest neighbors, then each observation will ha
 
 Using the k nearest neighbor rule, two observations could potentially be very far apart and still be considered neighbors.
 
-## Adjacency weights
+If the a feature is within the *threshold distance*, a 1 is given, otherwise a 0 is given. Neighborhoods are created based on which observations are judged contiguous.
 
-If the other feature is within the *threshold distance*, a 1 is given, otherwise a 0 is given. Neighborhoods are created based on which observations are judged contiguous.
+
+## Polygon Adjacency weights
 
 This is generally the best way to treat polygon features Polygons are contiguous if they share common topology, like an edge (line segment) or a vertex (point). Think like a chess board: *Rook adjacency* Neighbors must share a line segment
 
