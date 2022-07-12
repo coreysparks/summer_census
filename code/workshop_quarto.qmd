@@ -15,6 +15,7 @@ bibliography: SpatialDemographyClass.bib
 This short workshop will cover fundamentals of spatial data analysis, spatial clustering and the use of regression models that explicitly model spatial correlation in rates. I will use the Census Low Response Score as an example outcome and introduce the use of the Bayesian modeling package INLA, along with other R functions for spatial analysis. All materials will be provided on Github at the end of the workshop.
  
 Data and code for all examples can be found at:
+
  - [Code:(https://github.com/coreysparks/summer_census)](https://github.com/coreysparks/summer_census)
  
  - [Data:(https://github.com/coreysparks/data)](https://github.com/coreysparks/data)
