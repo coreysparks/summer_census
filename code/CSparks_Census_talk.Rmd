@@ -666,7 +666,7 @@ tx_lrs$i_re<-mod1$summary.random$struct2$mean
 library(tigris)
 sts<- counties(cb=T, state = 48)%>%
   st_transform(crs= 2163)
-tmap_mode("view")  
+tmap_mode("plot")  
 tmap_options(show.messages = FALSE)
 ```
 
