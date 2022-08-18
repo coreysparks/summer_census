@@ -7,8 +7,9 @@ institute:
 -  https://hcap.utsa.edu/demography
 date: "July 11, 2022"
 subtitle: Summer at Census Research Seminar
-
+format: pdf
 bibliography: SpatialDemographyClass.bib
+always_allow_html: true
 ---
 
 ## Spatial analysis workshop 
@@ -265,7 +266,7 @@ Here is the overall low response rate map for San Antonio.
 ```{r}
 library(tmap)
 
-tmap_mode("view")
+tmap_mode("plot")
 
 tm_shape(sa_lrs)+
   tm_polygons("Low_Respon",
@@ -323,7 +324,7 @@ sa_locali <- sa_locali %>%
 ```
 
 ```{r}
-tmap_mode("view")
+tmap_mode("plot")
 
 tm_shape(sa_locali)+
   tm_polygons("cluster",
@@ -565,7 +566,7 @@ First, we consider the basic GLM for the mortality outcome, without any hierarch
 
 We can write this model as a Negative Binomial model, for instance as:
 
-$\text{Deaths_ij} = log(E_d) + X' \beta $
+$$Deaths_{ij} = log(E_d) + X' \beta$$
 
 INLA will use vague Normal priors for the $\beta$'s, and we have not other parameters in the model to specify priors for. 
 
