@@ -1,19 +1,11 @@
 ---
 title: Beyond simple maps - Integrating space and time with Bayesian models
-author: 
-- "Corey S. Sparks, Ph.D."
+author: "Corey S. Sparks, Ph.D."
 institute:
 -  "Univerity of Texas at San Antonio - Department of Demography"
 -  https://hcap.utsa.edu/demography
 date: "July 11, 2022"
-subtitle: Summer at Census Research Seminar
-output:
-  xaringan::moon_reader:
-    lib_dir: libs
-    nature:
-      highlightStyle: github
-      highlightLines: true
-      countIncrementalSlides: false
+output: beamer_presentation
 ---
 
 ```{r, echo=FALSE, warning=FALSE, message=FALSE}
@@ -34,23 +26,20 @@ library(sf, quietly = T)
 knitr::opts_chunk$set(dpi=100, fig.height = 8, fig.width = 10)
 ```
 
----
 
-##Beyond maps...
+
+## Beyond maps...
 
 .center[![John Snow's Cholera Map](snow.png)]
 
----
 class: center, inverse
 
 .center[![Rural - Urban Continuum](rucc.png)]
 
----
 class: center, inverse
 
 .center[![IMR - Relative Risk, 2000](imr_raw2000.png)]
 
----
 
 ## Spatial Demography
 
@@ -60,41 +49,32 @@ class: center, inverse
   + Dynamics
   + Processes
 
---
 - Macro - demography (Voss, 2007)
   + Places as observations
   + Pre - 1960's
   + Ecological inference
 
-
---
 - Micro - demography
   + People as observations
   + Social theory
   + Individual choices
 
-
---
 - Multilevel - demography
   + People in places
   + Interaction between context and behavior
 
 
----
 
 ## Space & Time
 
 - [Future directions in spatial demography](https://escholarship.org/uc/item/7xx3k2z4) report
   + Most participants listed time or temporal data as integral to the future of the field
 
-
---
 - Time allows for dynamics of humans and environment
   + Snap shots/cross sections tell us nothing of this
 
 
----
-class: center, middle
+
 ## Space & Time data models 
 
 
@@ -102,7 +82,7 @@ class: center, middle
 
 [Kisilevich et al 2010](https://link-springer-com.libweb.lib.utsa.edu/chapter/10.1007/978-0-387-09823-4_44)
 
----
+
 ```{css echo=FALSE}
 .pull-left {
   float: left;
@@ -136,7 +116,7 @@ knitr::include_graphics("C:/Users/ozd504/Github/summer_census/code/hwy.jpg")
 ]
 
 
----
+
 
 ## Complexities
 
@@ -144,53 +124,37 @@ knitr::include_graphics("C:/Users/ozd504/Github/summer_census/code/hwy.jpg")
   + Surveys
   + __Administrative data__
 
---
 - Data management
   + Combining and merging data 
 
---
 - Analysis/methods
   + Problems with space
   + Problems with time
 
-
---
 - Advantages
   + Rich, dynamic contexts
   + Policy relevance of timely, prospective analysis
   
----
+
 
 ## Data sources
 
 - NCHS/CDC
-
---
 - Census/ACS
-
---
 - DHS
-
---
 - IPUMS
-
---
 - International agencies
-
---
 - Various administrative orgs.
   + State government
   + Private companies/Nonprofits
   
 
----
+
 
 ## How to combine these things?
 
 - Geocodes are essential
   + Limitation for many surveys
-
---
 - **Caveats**
 - Levels of geography
   + The evil tracts
@@ -201,7 +165,7 @@ knitr::include_graphics("C:/Users/ozd504/Github/summer_census/code/hwy.jpg")
   + Lots of ways, but are they all ideal?
   + These data can often be *very* large in size
   
----
+
 
 ## Hierarchical Models
 
@@ -217,7 +181,7 @@ knitr::include_graphics("C:/Users/ozd504/Github/summer_census/code/hwy.jpg")
 - Dynamic modeling
   + Place - specific time trends for example
 
----
+
 
 ## Empirical example
 - US County Mortality Rates
@@ -242,7 +206,7 @@ knitr::include_graphics("C:/Users/ozd504/Github/summer_census/code/hwy.jpg")
 - Restricted use data allows access to __ALL__ data
 
 
----
+
 
 ## Data example 
 ```{r echo=FALSE, warning=FALSE, fig.height=8, fig.width=10}
@@ -263,7 +227,7 @@ knitr::kable(head(mon1, n=12), row.names = F,
              align = "c")
 ```
 
----
+
 
 County specific temporal trends 1980 - 2010
 
@@ -287,7 +251,7 @@ p1+p2 +plot_layout()
 
 ```
 
----
+
 
 ## Florida Example
 - n = 67 counties $*$ 31 years $*$ 2 Races $*$ 2 Sexes = `r scales::label_comma(accuracy = 1)(67*31*2*2) `
@@ -413,7 +377,7 @@ ggsave(pa, filename="fig2.png", height = 6, width = 10, dpi = "print")
 
 ![](fig2.png)
 
----
+
 
 ## Methods - Bayesian Hierarchical models
 
@@ -437,7 +401,7 @@ $$
 $$
 
 
----
+
 
 ## Methods - Bayesian Hierearchical models
 * This type of model is commonly used in epidemiology and public health
@@ -450,7 +414,7 @@ $$
     + either figuring out what the full conditionals for all our model parameters are (hard)
     + Use some form of MCMC to arrive at the posterior marginal distributions for our parameters (time consuming)
 
----
+
 
 ## Methods - INLA approach
 * [Integrated Nested Laplace Approximation](http://www.math.ntnu.no/~hrue/r-inla.org/papers/inla-rss.pdf) - Rue, Martino & Chopin (2009)
@@ -461,7 +425,7 @@ $$
 * Attempts to construct a joint Gaussian approximation for $p(x | \theta, y)$
     + where $\theta$ is a small subset of hyper-parameters
 
----
+
 
 ## Methods - INLA approach
 * Apply these approximations to arrive at:
@@ -476,7 +440,7 @@ $$
 * Approximations to $\tilde{\pi}(\theta|y)$ are based on the Laplace appoximation of the marginal posterior density for $\pi(x,\theta|y)$
 * Their approach relies on numerical integration of the posterior of the latent field, as opposed to a pure Gaussian approximation of it
 
----
+
 
 ## INLA in R
 `library(INLA)`
@@ -491,7 +455,7 @@ $$
 
 `f(struct2, bl2, model="besag", graph="cl_graph", constr = T, scale.model = T)` **spatial disparity**
 
----
+
 
 ## Results
 - Time trend in Black/white Mortality
@@ -555,7 +519,7 @@ fl%>%
 #  facet_wrap(~factor(group) )
 ```
 
----
+
 
 ## County time trends
 
@@ -576,7 +540,7 @@ fl%>%
 
 ```
 
----
+
 ## Highlighed trends
 ```{r, echo=FALSE}
 fl%>%
@@ -599,7 +563,7 @@ fl%>%
   ggtitle("Modeled Black/White Mortality Rates in Florida", subtitle = "1980-2010")
 ``` 
   
----
+
 ## Spatial trend
 
 ```{r, echo=FALSE, fig.width=8, fig.height=6}
@@ -614,7 +578,7 @@ fls%>%
 ```
 
 
----
+
 ## Spatial disparity
 
 ```{r, echo=FALSE, fig.width=8, fig.height=6}
@@ -629,7 +593,7 @@ fls%>%
 
 ```
 
----
+
 ## Discussion
 * We see that, while there is a persistence of the gap in black-white mortality:
     + The mortality gap appears to be fairly consistent over time
@@ -639,7 +603,7 @@ fls%>%
 * Spatio-temporal modeling allows for the incorporation of dynamics that cross-sectional models cannot
 
 
----
+
 ## Low Response Score Outcome
 
 - INLA model for Low Response Score metric
@@ -671,7 +635,7 @@ tmap_options(show.messages = FALSE)
 ```
 
 
----
+
 ## Low Response Score in Texas
 
 ```{r, echo=FALSE, warning=FALSE, fig.width=8, fig.height=6 }
@@ -684,7 +648,7 @@ tm_shape(tx_lrs)+
 ```
 
 
----
+
 ### Spatial correlation random effect
 ```{r, echo=FALSE, warning=FALSE, fig.width=8, fig.height=6 }
 
@@ -696,7 +660,7 @@ tm_shape(tx_lrs)+
 
 ```
 
----
+
 ### IID random effect
 
 ```{r, echo=FALSE, fig.width=8, fig.height=6}
@@ -706,20 +670,20 @@ tm_shape(tx_lrs)+
   tm_borders(col = "black", lwd=1.5)
 ```
 
----
+
  - Spatial model fits much better than non-spatial model using *WAIC*
  - Suggests model should take into account spatial structure in LRS underlying data
   - Larger suggestion is that spatial correlation needs to be included in the underlying construction of the LRS
 
 
----
+
 ## More discussion
 
 * INLA allows for rapid deployment of Bayesian statistical models with latent Gaussian random effects
     + Faster and *generally* as accurate as MCMC
     + Potentially an attractive solution for problems where large data/complex models may make MCMC less desirable
 
----
+
 
 ## Thank you!
 

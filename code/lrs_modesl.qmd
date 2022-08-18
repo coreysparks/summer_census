@@ -1,0 +1,105 @@
+---
+title: "LRS measurement error models"
+author: "Corey Sparks"
+format: html
+editor: visual
+---
+
+```{r}
+library(tidyverse)
+#txlrs <- readRDS(here::here("data", "tx_lrs.rds"))
+lrs <- read_csv("C:/Users/ozd504/OneDrive - University of Texas at San Antonio/projects/census_summer/data/pdb2021trv3_us.csv/pdb2021trv3_us.csv") 
+
+tx_lrs <- lrs %>%
+  filter(State == "48")
+```
+
+
+```{r}
+library(brms)
+
+tx_lrs$Med_HHD_Inc_ACS_15_19 <- parse_number(tx_lrs$Med_HHD_Inc_ACS_15_19)
+tx_lrs$Med_House_Value_ACS_15_19 <- parse_number(tx_lrs$Med_House_Value_ACS_15_19)
+
+
+tx_lrs$Med_HHD_Inc_ACSMOE_15_19 <- parse_number(tx_lrs$Med_HHD_Inc_ACSMOE_15_19)
+tx_lrs$Med_House_Value_ACSMOE_15_19 <- parse_number(tx_lrs$Med_House_Value_ACSMOE_15_19)
+
+
+mod_dat <- tx_lrs %>%
+  select( Mail_Return_Rate_CEN_2010, pct_College_ACS_15_19, pct_Prs_Blw_Pov_Lev_ACS_15_19, pct_MrdCple_HHD_ACS_15_19, pct_NonFamily_HHD_ACS_15_19,  pct_Rel_Under_6_ACS_15_19, Med_HHD_Inc_ACS_15_19, pct_Renter_Occp_HU_ACS_15_19,  pct_Single_Unit_ACS_15_19, pct_MLT_U2_9_STRC_ACS_15_19, pct_MLT_U10p_ACS_15_19, Med_House_Value_ACS_15_19, pct_Civ_emp_16_24_ACS_15_19,pct_One_Health_Ins_ACS_15_19, pct_TwoPHealthIns_ACS_15_19, pct_No_Health_Ins_ACS_15_19, 
+         pct_College_ACSMOE_15_19, pct_Prs_Blw_Pov_Lev_ACSMOE_15_19, pct_MrdCple_HHD_ACSMOE_15_19, pct_NonFamily_HHD_ACSMOE_15_19,  pct_Rel_Under_6_ACSMOE_15_19, Med_HHD_Inc_ACSMOE_15_19, pct_Renter_Occp_HU_ACSMOE_15_19,  pct_Single_Unit_ACSMOE_15_19, pct_MLT_U2_9_STRC_ACSMOE_15_19, pct_MLT_U10p_ACSMOE_15_19, Med_House_Value_ACSMOE_15_19, pct_Civ_emp_16_24_ACSMOE_15_19,pct_One_Health_Ins_ACSMOE_15_19, pct_TwoPHealthIns_ACSMOE_15_19, pct_No_Health_Ins_ACSMOE_15_19) %>%
+  mutate_if(is.character, as.numeric)
+```
+
+```{r}
+f<-  as.formula(paste("Mail_Return_Rate_CEN_2010 ~ ", paste(names(mod_dat[, 2:16]), collapse= "+")))
+
+f
+```
+
+```{r}
+summary(mod_dat)
+m1 <- lm (formula = f, data=mod_dat)
+summary(m1)
+car::vif(m1)
+```
+
+
+```{r}
+library(brms)
+options(mc.cores = parallel::detectCores())
+
+tx_lrs$Med_HHD_Inc_ACS_15_19 <- parse_number(tx_lrs$Med_HHD_Inc_ACS_15_19)
+tx_lrs$Med_House_Value_ACS_15_19 <- parse_number(tx_lrs$Med_House_Value_ACS_15_19)
+
+
+tx_lrs$Med_HHD_Inc_ACSMOE_15_19 <- parse_number(tx_lrs$Med_HHD_Inc_ACSMOE_15_19)
+tx_lrs$Med_House_Value_ACSMOE_15_19 <- parse_number(tx_lrs$Med_House_Value_ACSMOE_15_19)
+
+
+mod_dat <- tx_lrs %>%
+  filter(County == '029')%>%
+  select( Mail_Return_Rate_CEN_2010, pct_College_ACS_15_19, pct_Prs_Blw_Pov_Lev_ACS_15_19, pct_MrdCple_HHD_ACS_15_19, pct_NonFamily_HHD_ACS_15_19,  pct_Rel_Under_6_ACS_15_19, Med_HHD_Inc_ACS_15_19, pct_Renter_Occp_HU_ACS_15_19,  pct_Single_Unit_ACS_15_19, pct_MLT_U2_9_STRC_ACS_15_19, pct_MLT_U10p_ACS_15_19, Med_House_Value_ACS_15_19, pct_Civ_emp_16_24_ACS_15_19,pct_One_Health_Ins_ACS_15_19, pct_TwoPHealthIns_ACS_15_19, pct_No_Health_Ins_ACS_15_19, 
+         pct_College_ACSMOE_15_19, pct_Prs_Blw_Pov_Lev_ACSMOE_15_19, pct_MrdCple_HHD_ACSMOE_15_19, pct_NonFamily_HHD_ACSMOE_15_19,  pct_Rel_Under_6_ACSMOE_15_19, Med_HHD_Inc_ACSMOE_15_19, pct_Renter_Occp_HU_ACSMOE_15_19,  pct_Single_Unit_ACSMOE_15_19, pct_MLT_U2_9_STRC_ACSMOE_15_19, pct_MLT_U10p_ACSMOE_15_19, Med_House_Value_ACSMOE_15_19, pct_Civ_emp_16_24_ACSMOE_15_19,pct_One_Health_Ins_ACSMOE_15_19, pct_TwoPHealthIns_ACSMOE_15_19, pct_No_Health_Ins_ACSMOE_15_19) %>%
+  mutate_if(is.character, as.numeric)
+
+mescale <- function (x){
+  x/1.645
+}
+
+scale2 <- function(x, na.rm = FALSE) (x - mean(x, na.rm = na.rm)) / sd(x, na.rm)
+
+mod_dat<- mod_dat%>%
+  mutate_at(vars(contains("ACSMOE")), mescale)
+
+mod_dat[, 1:16 ]<- scale(mod_dat[, 1:16], scale = F)
+mod_dat[17:31]<-apply(mod_dat[17:31], 2, function(x) x/1.645)
+
+#mod_dat<- scale(mod_dat)
+```
+
+
+```{r}
+me_mod <- brm(bf(Mail_Return_Rate_CEN_2010 ~ 
+                me(pct_College_ACS_15_19, sdx = pct_College_ACSMOE_15_19) + 
+                me(pct_Prs_Blw_Pov_Lev_ACS_15_19, sdx =pct_Prs_Blw_Pov_Lev_ACSMOE_15_19)+   
+                me(pct_MrdCple_HHD_ACS_15_19,pct_MrdCple_HHD_ACSMOE_15_19) +
+                me(pct_NonFamily_HHD_ACS_15_19, sdx = pct_NonFamily_HHD_ACSMOE_15_19) + 
+                me( pct_Rel_Under_6_ACS_15_19, sdx = pct_Rel_Under_6_ACSMOE_15_19) +
+                me(Med_HHD_Inc_ACS_15_19, sdx = Med_HHD_Inc_ACSMOE_15_19 )+
+                me(pct_Renter_Occp_HU_ACS_15_19, sdx =pct_Renter_Occp_HU_ACSMOE_15_19 ) +
+                me(pct_Single_Unit_ACS_15_19, sdx = pct_Single_Unit_ACSMOE_15_19) +
+                me( pct_MLT_U2_9_STRC_ACS_15_19 , sdx =pct_MLT_U2_9_STRC_ACSMOE_15_19) + 
+                me(pct_MLT_U10p_ACS_15_19 , sdx =pct_MLT_U10p_ACSMOE_15_19) + 
+                me(Med_House_Value_ACS_15_19 , sdx =Med_House_Value_ACSMOE_15_19) +
+                me(pct_Civ_emp_16_24_ACS_15_19, sdx = pct_Civ_emp_16_24_ACSMOE_15_19 )+ 
+                me(pct_One_Health_Ins_ACS_15_19, sdx = pct_One_Health_Ins_ACSMOE_15_19) +
+                me( pct_TwoPHealthIns_ACS_15_19 , sdx = pct_TwoPHealthIns_ACSMOE_15_19)+ 
+                me(pct_No_Health_Ins_ACS_15_19, sdx = pct_No_Health_Ins_ACSMOE_15_19))+ set_mecor(FALSE),
+              data = mod_dat, family="gaussian", cores = 3, chains=3,warmup = 3000, iter = 7000, control = list(max_treedepth =15, adapt_delta = .99))
+
+
+
+```
+
